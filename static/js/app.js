@@ -28,6 +28,12 @@ app.controller('DebtCtrl', function ($scope, RestService) {
             $scope.pictureData
         ).success(function (data) {
             $scope.debts.push(data.debt);
+
+            // Reset the form for the next input.
+            $scope.amount = '';
+            $scope.notes = '';
+            $scope.pictureData = null;
+            $('#fileInput')[0].value = null;
         });
     };
 

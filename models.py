@@ -1,5 +1,8 @@
+from base64 import b64decode
+from uuid import uuid4
 import datetime
 import os
+import re
 
 from sqlalchemy.orm import sessionmaker, class_mapper
 from sqlalchemy import create_engine, Column, Integer, String, Date
@@ -21,7 +24,7 @@ class Debt(Base):
     notes = Column(String)
     image_name = Column(String)
 
-    def __init__(self, name, owed_to, amount, date, notes, image_name):
+    def __init__(self, name, owed_to, amount, date, notes, encoded_data):
         if not isinstance(date, datetime.date):
             raise AssertionError('Date is supposed to be an instance of date.')
 
@@ -30,7 +33,7 @@ class Debt(Base):
         self.amount = amount
         self.date = date
         self.notes = notes
-        self.image_name = image_name
+        self.image_name = self._save_image(encoded_data)
 
     def to_public_dict(self):
         the_date = datetime.datetime(self.date.year, self.date.month, self.date.day)
@@ -44,8 +47,20 @@ class Debt(Base):
             'amount': self.amount,
             'date': total_millis,
             'notes': self.notes,
-            'image_path': os.path.join('/images/', self.image_name) if self.image_name else None
+            'image_path': os.path.join(config.UPLOADS_DIR_NAME, self.image_name) if self.image_name else None
         }
+
+    def _save_image(self, encoded_data):
+        if not encoded_data: return None
+
+        ext, data = re.match('data:image/(\w+);base64,(.*)$', encoded_data).groups()
+        name = '{}.{}'.format(uuid4(), ext)
+        path = os.path.join(config.UPLOADS_DIR, name)
+
+        with open(path, 'wb') as fout:
+            fout.write(b64decode(data))
+
+        return name
 
 
 def add_sample_data():

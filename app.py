@@ -1,10 +1,7 @@
-from base64 import b64decode
 from flask import Flask, jsonify, request, abort
-from uuid import uuid4
 import datetime
 import json
 import os
-import re
 
 from models import Session, Debt
 import config
@@ -28,18 +25,6 @@ def get_all_debts():
 
 @app.route('/api/debts', methods=['POST'])
 def add_a_debt():
-    def save_image(encoded_data):
-        if not encoded_data: return None
-
-        ext, data = re.match('data:image/(\w+);base64,(.*)$', encoded_data).groups()
-        name = '{}.{}'.format(uuid4(), ext)
-        path = os.path.join(IMAGE_DIR, name)
-
-        with open(path, 'wb') as fout:
-            fout.write(b64decode(data))
-
-        return name
-
     if not request.json:
         abort(400)
 
@@ -53,10 +38,7 @@ def add_a_debt():
     # Convert the date into a date object.
     date = datetime.datetime.fromtimestamp(data['date'] / 1000).date()
 
-    # Save the image to a specific directory.
-    image_name = save_image(data['image'])
-
-    debt = Debt(data['name'], data['owed_to'], data['amount'], date, data['notes'], image_name)
+    debt = Debt(data['name'], data['owed_to'], data['amount'], date, data['notes'], data['image'])
     session = Session()
     session.add(debt)
     session.commit()

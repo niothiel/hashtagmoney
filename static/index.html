@@ -52,7 +52,7 @@
             <textarea id="notes" rows="3" placeholder="Toothbrush, toilet paper, milk, etc." ng-model="notes" required></textarea>
 
             <label>Got a picture?</label>
-            <input type="file" accept=".png,.jpg,.jpeg,.bmp" app-file-reader ng-model="pictureData"/>
+            <input id="fileInput" type="file" accept=".png,.jpg,.jpeg,.bmp" app-file-reader ng-model="pictureData"/>
 
             <button class="button expand" ng-click="submit()">Add</button>
         </form>
