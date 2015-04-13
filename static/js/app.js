@@ -12,14 +12,22 @@ app.controller('DebtCtrl', function ($scope, RestService) {
     $scope.date = new Date();
     $scope.notes = '';
     $scope.debts = null;
+    $scope.pictureData = null;
 
     $scope.submit = function () {
-        RestService.addNewDebt($scope.name, $scope.owedTo, $scope.amount, $scope.date, $scope.notes).success(function (data) {
+        RestService.addNewDebt(
+            $scope.name,
+            $scope.owedTo,
+            $scope.amount,
+            $scope.date,
+            $scope.notes,
+            $scope.pictureData
+        ).success(function (data) {
             $scope.debts.push(data.debt);
         });
     };
 
-    RestService.getAllDebts().success(function (data, status, headers, config) {
+    RestService.getAllDebts().success(function (data, status) {
         $scope.debts = data.debts;
     });
 });
@@ -40,7 +48,7 @@ app.service('RestService', function ($http, $q) {
         });
     };
 
-    this.addNewDebt = function (name, owedTo, amount, date, notes) {
+    this.addNewDebt = function (name, owedTo, amount, date, notes, image) {
         try {
             amount = parseFloat(amount);
             amount = parseInt(amount * 100);
@@ -53,10 +61,50 @@ app.service('RestService', function ($http, $q) {
             owed_to: owedTo,
             amount: amount,
             date: date.valueOf(),
-            notes: notes
+            notes: notes,
+            image: image
         };
         return $http.post('/api/debts', debt).success(function (data) {
             data.debt.date = getDate(data.debt.date);
         });
     }
+});
+
+app.directive('appFileReader', function($q) {
+    var slice = Array.prototype.slice;
+
+    return {
+        restrict: 'A',
+        require: '?ngModel',
+        link: function(scope, element, attrs, ngModel) {
+                if (!ngModel) return;
+
+                ngModel.$render = function() {};
+
+                element.bind('change', function(e) {
+                    var element = e.target;
+
+                    $q.all(slice.call(element.files, 0).map(readFile))
+                        .then(function(values) {
+                            if (element.multiple) ngModel.$setViewValue(values);
+                            else ngModel.$setViewValue(values.length ? values[0] : null);
+                        });
+
+                    function readFile(file) {
+                        var deferred = $q.defer();
+
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            deferred.resolve(e.target.result);
+                        };
+                        reader.onerror = function(e) {
+                            deferred.reject(e);
+                        };
+                        reader.readAsDataURL(file);
+
+                        return deferred.promise;
+                    }
+                });
+            }
+    };
 });
