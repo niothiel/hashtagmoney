@@ -1,10 +1,8 @@
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request
 import datetime
-import json
-import os
 
 from models import Session, Debt
-import config
+import schemas
 
 app = Flask(__name__, static_url_path='')
 
@@ -24,16 +22,9 @@ def get_all_debts():
 
 
 @app.route('/api/debts', methods=['POST'])
+@schemas.require(schemas.DEBT)
 def add_a_debt():
-    if not request.json:
-        abort(400)
-
     data = request.json
-    if 'name' not in data or \
-        'owed_to' not in data or \
-        'amount' not in data or \
-        'date' not in data:
-        abort(400)
 
     # Convert the date into a date object.
     date = datetime.datetime.fromtimestamp(data['date'] / 1000).date()
