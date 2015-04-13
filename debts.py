@@ -20,12 +20,13 @@ engine = create_engine('sqlite:///' + DB_PATH, echo=True)
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 
 
 @app.route('/')
 def send_index():
     return app.send_static_file('index.html')
+
 
 @app.route('/api/debts', methods=['GET'])
 def get_all_debts():
@@ -80,21 +81,6 @@ def add_a_debt():
 def not_found(error):
     print error
     return jsonify({'error': 'Not found'}), 404
-
-
-@app.route('/js/<path:path>')
-def send_js(path):
-    return send_from_directory(os.path.join(BASE_DIR, 'static/js'), path)
-
-
-@app.route('/css/<path:path>')
-def send_css(path):
-    return send_from_directory(os.path.join(BASE_DIR, 'static/css'), path)
-
-
-@app.route('/images/<path:path>')
-def send_images(path):
-    return send_from_directory(IMAGE_DIR, path)
 
 
 class Debt(Base):

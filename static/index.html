@@ -6,29 +6,28 @@
     <title>#money</title>
 
     <!-- Foundation -->
-    <link rel="stylesheet" href="/css/normalize.css"/>
-    <link rel="stylesheet" href="/css/foundation.css"/>
-    <link rel="stylesheet" href="/css/foundation-icons.css"/>
-
-    <!-- Our Customizations -->
-    <link rel="stylesheet" href="/css/main.css"/>
-
-    <!-- Foundation -->
     <script src="/js/vendor/modernizr.js"></script>
     <script src="/js/vendor/jquery.js"></script>
     <script src="/js/vendor/fastclick.js"></script>
     <script src="/js/foundation/foundation.js"></script>
-    <script src="/js/foundation/foundation.clearing.js"></script>
+    <link rel="stylesheet" href="/css/normalize.css"/>
+    <link rel="stylesheet" href="/css/foundation.css"/>
+    <link rel="stylesheet" href="/css/foundation-icons.css"/>
+
+    <!-- Fancy Box -->
+    <script src="/js/fancybox/jquery.fancybox.js"></script>
+    <script src="/js/fancybox/jquery.fancybox.pack.js"></script>
+    <link rel="stylesheet" href="/js/fancybox/jquery.fancybox.css"/>
 
     <!-- Angular -->
     <script src="/js/angular.min.js"></script>
 
     <!-- Main Code -->
     <script src="/js/app.js"></script>
+    <link rel="stylesheet" href="/css/main.css"/>
 </head>
 <body ng-app="">
 <h1 class="text-center">#money</h1>
-
 
 <div class="row" ng-controller="DebtCtrl">
     <div class="medium-4 columns">
@@ -76,12 +75,9 @@
                     <td>{{ debt.date.toDateString() }}</td>
                     <td>{{ debt.notes }}</td>
                     <td class="text-center">
-                        <ul class="clearing-thumbs" data-clearing>
-                            <li><a href="/images/eac23f48-f1ff-4704-b92a-b460226bdb5e.jpeg"><img src="/images/eac23f48-f1ff-4704-b92a-b460226bdb5e.jpeg"></a></li>
-                        </ul>
-
-                        <!-- <img ng-src="{{ debt.image_path }}"> -->
-                        <i class="fi-camera size-21"></i>
+                        <a class="fancybox" rel="group" ng-href="{{ debt.image_path }}" ng-if="debt.image_path.length > 0">
+                            <i class="fi-camera size-21"></i>
+                        </a>
                     </td>
                 </tr>
             </tbody>
@@ -91,6 +87,9 @@
 
 <script>
     $(document).foundation();
+    $(document).ready(function () {
+        $('.fancybox').fancybox();
+    });
 </script>
 </body>
 </html>
