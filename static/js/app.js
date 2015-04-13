@@ -15,6 +15,10 @@ app.controller('DebtCtrl', function ($scope, RestService) {
     $scope.pictureData = null;
 
     $scope.submit = function () {
+        if (!$scope.form.$valid) {
+            return;
+        }
+
         RestService.addNewDebt(
             $scope.name,
             $scope.owedTo,
@@ -26,6 +30,26 @@ app.controller('DebtCtrl', function ($scope, RestService) {
             $scope.debts.push(data.debt);
         });
     };
+
+    $scope.selectedName = function () {
+        if ($scope.name === $scope.owedTo) {
+            $scope.owedTo = selectAnotherName($scope.name, $scope.names);
+        }
+    };
+
+    $scope.selectedOwedTo = function () {
+        if ($scope.name === $scope.owedTo) {
+            $scope.name = selectAnotherName($scope.name, $scope.names);
+        }
+    }
+
+    function selectAnotherName(name, nameList) {
+        var nameIdx = nameList.indexOf(name);
+        if (nameIdx < 0) return null;
+
+        var otherIdx = (nameIdx + 1) % nameList.length;
+        return nameList[otherIdx];
+    }
 
     RestService.getAllDebts().success(function (data, status) {
         $scope.debts = data.debts;

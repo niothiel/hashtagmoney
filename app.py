@@ -60,9 +60,10 @@ def add_a_debt():
     session = Session()
     session.add(debt)
     session.commit()
-    session.close()
 
-    return jsonify({'debt': debt.to_public_dict()})
+    response = jsonify({'debt': debt.to_public_dict()})
+    session.close()
+    return response
 
 
 @app.errorhandler(404)

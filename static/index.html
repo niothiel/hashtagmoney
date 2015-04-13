@@ -31,29 +31,31 @@
 
 <div class="row" ng-controller="DebtCtrl">
     <div class="medium-4 columns">
-        <label>Who are you?</label>
-        <select id="name" ng-model="name" autofocus>
-            <option ng-repeat="name in names">{{ name }}</option>
-        </select>
+        <form name="form">
+            <label>Who are you?</label>
+            <select id="name" ng-model="name" autofocus ng-change="selectedName()">
+                <option ng-repeat="name in names">{{ name }}</option>
+            </select>
 
-        <label>Who owes you money?</label>
-        <select ng-model="owedTo">
-            <option ng-repeat="name in names">{{ name }}</option>
-        </select>
+            <label>Who owes you money?</label>
+            <select ng-model="owedTo" ng-change="selectedOwedTo()">
+                <option ng-repeat="name in names">{{ name }}</option>
+            </select>
 
-        <label>How much do they owe?</label>
-        <input type="text" placeholder="Amount" ng-model="amount"/>
+            <label>How much do they owe?</label>
+            <input type="number" placeholder="Amount" ng-model="amount" required min="0.01" max="500" step="0.01"/>
 
-        <label>When did this happen?</label>
-        <input id="date" type="date" ng-model="date"/>
+            <label>When did this happen?</label>
+            <input id="date" type="date" ng-model="date"/>
 
-        <label>What for?</label>
-        <textarea id="notes" rows="3" placeholder="Toothbrush, toilet paper, milk, etc." ng-model="notes"></textarea>
+            <label>What for?</label>
+            <textarea id="notes" rows="3" placeholder="Toothbrush, toilet paper, milk, etc." ng-model="notes" required></textarea>
 
-        <label>Got a picture?</label>
-        <input type="file" accept=".png,.jpg,.jpeg,.bmp" app-file-reader ng-model="pictureData"/>
+            <label>Got a picture?</label>
+            <input type="file" accept=".png,.jpg,.jpeg,.bmp" app-file-reader ng-model="pictureData"/>
 
-        <button class="button expand" ng-click="submit()">Add</button>
+            <button class="button expand" ng-click="submit()">Add</button>
+        </form>
     </div>
     <div class="medium-8 columns">
         <table>
