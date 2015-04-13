@@ -65,3 +65,4 @@ target/
 # Custom stuff
 debts.db
 sqlite3.exe
+static/uploads
